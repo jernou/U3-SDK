@@ -14,7 +14,7 @@ server config, shutdown, network update loop. **Never read it whole** — grep f
 | Client connects | `Provider.connect(...)`; host: `Provider.host()` |
 | Accept / reject / kick / ban | `accept`, `reject`, `kick`, `onBanPlayerRequested*`, `onCheckBanStatus*` |
 | Plugin hooks | public static delegates/events: `onServerConnected`, `onServerDisconnected`, `onCheckValid*`, ... |
-| Server config (`Config.json`) | `Provider.configData` → `Unturned/Settings/PlayConfigData.cs` |
+| Server config (`Config.json`) | `Provider.configData`, per-mode values `Provider.modeConfigData` (`Unturned/Settings/PlayConfigData.cs`) |
 | Admins / bans / whitelist | `SteamAdminlist.cs`, `SteamBlacklist.cs`, `SteamWhitelist.cs` |
 | Choosing transport | `NetTransportFactory.cs` |
 | Lobbies, server advertisement | `Lobbies.cs`, `SteamServerAdvertisement.cs` |

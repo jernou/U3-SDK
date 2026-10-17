@@ -22,7 +22,9 @@ SendHealth.Invoke(GetNetId(), ENetReliability.Reliable, channel.GetOwnerTranspor
   `context.GetPlayer()`, `context.GetCallingPlayer()`, `context.Kick(reason)`.
 - Recipients: `channel.GetOwnerTransportConnection()`, `channel.GatherRemoteClientConnectionsExcludingOwner()`,
   `Provider.GatherRemoteClientConnections()`, `...WithinSphere(...)` variants in `Provider.cs`.
-- `InvokeAndLoopback` also runs the receiver locally (listen server / singleplayer).
+- `InvokeAndLoopback` sends to the given connections **and** runs the receiver on the server itself — used when the
+  server applies state through the same `Receive*` method. No listen server exists: in singleplayer every
+  connection is local and plain `Invoke` loops back too (`ClientMethodHandle.cs`).
 - Parameter compression is controlled by attributes in `NetInvokableAttributes.cs`
   (`[NetPakVector3]`, `[NetPakNormal]`, ...).
 

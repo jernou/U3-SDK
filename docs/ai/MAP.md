@@ -37,7 +37,7 @@ Paths are relative to `Assets/Runtime/Assembly-CSharp/` unless they start with `
 | UI: menus, HUD, dashboard | ★ `Unturned/UI` | `Unturned/Player/PlayerUI.cs`, `Unturned/Sleek`, `Glazier*` |
 | Effects, particles, sounds | `Unturned/Managers/EffectManager.cs` | `Unturned/Bundles/EffectAsset.cs` |
 | Saving / loading world & player | `Unturned/Managers/SaveManager.cs` | `Unturned/Files` (`ReadWrite`, `Block`, `*Savedata`) |
-| Server gameplay config (`Config.json`) | `Unturned/Settings/PlayConfigData.cs` | `Unturned/Provider/Provider.cs` |
+| Server gameplay config (`Config.json`) | `Unturned/Settings/PlayConfigData.cs` (`ConfigData`, `ModeConfigData`) | `Provider.configData`, `Provider.modeConfigData` |
 | Client settings (graphics, audio, controls) | `Unturned/Settings` | — |
 | Localization strings | `Unturned/Files/Localization.cs`, `Unturned/Files/Local.cs` | (`.dat` texts are in the game install) |
 | Workshop / mods download | `Provider/Services/Workshop`, `Unturned/Provider/SteamContent.cs` | `Unturned/Bundles/DedicatedUGC.cs` |
@@ -74,9 +74,14 @@ Paths are relative to `Assets/Runtime/Assembly-CSharp/` unless they start with `
 | `Unturned/Tools` | Static helpers: `DamageTool`, `PlayerTool`, `ItemTool`, `NPCTool`, `VehicleTool` |
 | `Unturned/Utils` | Misc utilities, logging (`UnturnedLog`), `CommandLine`, layers/masks |
 | `Unturned/Files` | File IO, savedata, localization |
-| `Unturned/Settings` | Client options + server `PlayConfigData` |
+| `Unturned/Settings` | Client options (graphics, controls, audio) + server gameplay config classes |
 | `Unturned/Inventory` | `Item`, `ItemJar`, `Items` (page), blueprints |
 | `Unturned/Zombies`, `Unturned/Animals` | AI entities |
+| `Unturned/Throwables` | Projectile components (grenades, rockets, care packages); used on modders' prefabs — same rules as ★ `Unturned/ModHooks` |
+| `Unturned/Characters` | Character rig: `HumanAnimator`, `HumanClothes`, `CharacterAnimator` |
+| `Unturned/Decals` | Decal rendering (`DecalSystem`, `DecalRenderer`) |
+| `Unturned/Network` | `NetworkSnapshotBuffer` (interpolation of replicated positions), `RateLimitedAction` |
+| `Unturned/Constants` | `Palette` — shared UI colors |
 | `Unturned/Game` | Enums for server/game modes |
 | `Unturned/Loading` | Startup: `Setup.cs`, loading screen, custom player loop |
 | `Unturned/Regions` | World grid helpers |
@@ -85,12 +90,17 @@ Paths are relative to `Assets/Runtime/Assembly-CSharp/` unless they start with `
 | `Framework/Landscapes`, `Framework/Foliage`, `Framework/Water` | Terrain, foliage, water volumes |
 | `Framework/Modules` | Loading of `.module` plugin assemblies |
 | `Framework/IO` | Serialization helpers, formatted files |
+| `Framework/Utilities`, `Framework/Extensions`, `Framework/Rendering`, `Framework/Debug` | Small helpers: pools, math, shape volumes; extension methods; GL line drawing; inspectable paths |
+| `CustomPostProcess`, `General` | Post-process effects (`SkyFog`, `SrScope`); tiny generic components (`DontDestroyOnLoad`, ...) |
 | `NetInvokable` ★ | RPC runtime |
 | `NetGen` | Generated code — regenerate, never edit |
 | `NetMessaging` | Connection-level messages, `ClientMessageHandler_*` / `ServerMessageHandler_*` |
 | `Provider`, `SteamworksProvider` | Service abstraction over Steamworks (economy, workshop, cloud, achievements) |
 | `Glazier`, `Glazier_IMGUI`, `Glazier_uGUI`, `Glazier_UIToolkit` | UI backend implementations; interfaces in `Assets/Runtime/SDG.Glazier` |
 | `ItemStore` | In-game cosmetic store UI |
+| `Assets/Runtime/SystemEx`, `Assets/Runtime/UnityEx` | Extension helpers for System / UnityEngine types; may depend only on System types (see their `README.md`) |
+| `Assets/Runtime/LiveConfig`, `Assets/Runtime/SDG.HostBans` | Singletons that download live config and host-ban filters from SDG servers |
+| `Assets/Editor/SteamCmd`, `Assets/Editor/UnityEditorEx` | SteamCMD app/depot build scripts; small editor helpers (paths, shell, icons) |
 
 ## Large files — read by line range, grep first
 

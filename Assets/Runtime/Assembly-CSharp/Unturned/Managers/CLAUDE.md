@@ -22,7 +22,8 @@ the region — use `Regions.tryGetCoordinate` / `tryGetRegion` helpers rather th
 
 ## Rules
 
-- Creation/destruction/damage only on server; manager methods early-return on clients.
+- Mutations run on the server only, but most older static methods (e.g. `BarricadeManager.damage`) do **not** check
+  `Provider.isServer` themselves — the caller must. Newer server-only APIs are prefixed `Server` (`ServerSetDoorOpen`, ...).
 - Many public static methods and events are used by plugins (`onDamageBarricadeRequested`, ...) — keep signatures.
 - Save/load: each manager has `save()` called from `SaveManager.save()`; formats are versioned.
 - `BarricadeManager.cs`, `VehicleManager.cs` are ~3.5k lines: grep first.

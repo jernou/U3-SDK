@@ -15,7 +15,7 @@ Source of Unturned (Unity 2022.3.62f3, C#, namespace `SDG.Unturned`). ~1 950 `.c
 |---|---|
 | `Assets/Runtime/Assembly-CSharp/Unturned` | Gameplay: player, items, vehicles, zombies, level, UI, server |
 | `Assets/Runtime/Assembly-CSharp/Framework` | Engine-level systems: devkit editor, foliage, landscapes, modules, IO |
-| `Assets/Runtime/Assembly-CSharp/NetInvokable` | RPC system (`[SteamCall]`, `ClientInstanceMethod`, ...) |
+| `Assets/Runtime/Assembly-CSharp/NetInvokable` | RPC system (`SteamCall` attribute, `ClientInstanceMethod`, ...) |
 | `Assets/Runtime/Assembly-CSharp/NetGen` | **Generated** RPC/enum serializers — never edit by hand |
 | `Assets/Runtime/Assembly-CSharp/NetMessaging` | Low-level connection messages (auth, ping, kick) |
 | `Assets/Runtime/*` (other folders) | Small standalone assemblies (`.asmdef`): NetPak, Glazier, UnturnedDat, SystemEx, UnityEx |
@@ -35,27 +35,30 @@ Source of Unturned (Unity 2022.3.62f3, C#, namespace `SDG.Unturned`). ~1 950 `.c
 
 - **Server is authoritative.** Gameplay state changes happen on the server (`Provider.isServer`) and are
   replicated to clients by RPC. Never trust client input: validate in the server-side `Receive*` method.
+- **No listen server.** A session is either singleplayer (`Provider.isServer` and `Provider.isClient` both true)
+  or a dedicated server with remote clients.
 - **Dedicated server build** compiles with `DEDICATED_SERVER`; client-only code (UI, audio, effects) must be
   inside `#if !DEDICATED_SERVER` or guarded by `Dedicator.IsDedicatedServer`.
 - **RPC changes require regenerating NetGen** (see `Assets/Runtime/Assembly-CSharp/NetInvokable/CLAUDE.md`).
 - **Public API is a contract with modders/plugins** (RocketMod, OpenMod). Don't rename or remove public
-  members, events or delegates; add new ones and mark old ones `[System.Obsolete]`. Keep `legacyName` on RPCs.
-- **Save formats are versioned** (`SAVEDATA_VERSION*` constants). Never change read/write order without
+  members, events or delegates; add new ones and mark old ones obsolete. Keep `legacyName` on RPCs.
+- **Save formats are versioned** (`SAVEDATA_VERSION` constants). Never change read/write order without
   bumping the version and keeping the old read path.
 - **Every new file or folder under `Assets/` needs a `.meta`.** Without Unity, copy the format of a neighbour
   `.meta` and generate a fresh GUID (`python3 -c "import uuid;print(uuid.uuid4().hex)"`).
-- Style: tabs, LF in git, the 4-line license header at the top of every `.cs`, ~120 columns,
-  match the naming of surrounding code (old code uses `camelCase` methods, new code `PascalCase`).
+- Style: tabs, LF in git, the 4-line license header at the top of every `.cs`, ~120 columns, match the naming
+  of surrounding code (older code uses lower-case-first method names, newer code upper-case-first).
 - Logging: `UnturnedLog.info`, `UnturnedLog.warn`, `UnturnedLog.error` — not `Debug.Log`.
 
-## Keeping these docs current (mandatory, same commit as the code)
+## Docs: current state, inbox, error records (mandatory)
 
-| You changed... | Update |
-|---|---|
-| Added / moved / deleted a directory or subsystem, changed an entry point | `docs/ai/MAP.md` |
-| A rule, pattern or pitfall inside a directory | that directory's `CLAUDE.md` |
-| Created a directory with ~10+ files or its own conventions | new `CLAUDE.md` from the template in `docs/ai/README.md` (+ `.meta`), list it in `MAP.md` |
-| Learned something non-obvious that cost you time | the closest `CLAUDE.md`, section "Pitfalls" |
-
-Then run `python3 docs/ai/check_docs.py` — it fails if a path mentioned in the docs no longer exists.
-Docs say **where** and **why**, never copy code or line numbers (they go stale).
+Docs describe the **current** code. Edit lines in place — add, rewrite, delete. Never append change notes
+or dates: history lives in git. Never copy code or line numbers.
+- **Same commit as the code:** new/moved/deleted directory or entry point → `docs/ai/MAP.md`;
+  a statement in a directory's `CLAUDE.md` became false → rewrite it.
+- **Anything else worth knowing** (pitfall, surprise, suspicion you could not verify) → one line in
+  `docs/ai/INBOX.md`. Don't edit docs mid-task for it; `/doc-sync` routes inbox lines later.
+- Write behavioural claims (threads, lifecycle, server/client side) into docs only after checking them in code.
+- **Hit a real error?** First search `docs/ai/errors/` for its message or CS code; after the fix, add a record
+  (format in `docs/ai/errors/README.md`).
+- Before committing run `python3 docs/ai/check_docs.py` (paths, symbols, budgets, map coverage; CI runs it too).
